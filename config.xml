@@ -32,6 +32,7 @@
 
 		<plugin name="cordova-plugin-insomnia" spec="*"/>
 		<plugin name="cordova-plugin-statusbar" spec="*"/>
+		<plugin name="cordova-plugin-flashlight" spec="*"/>
 		<plugin name="cordova-plugin-extension" spec="*"/>
 		<plugin name="cordova-plugin-whitelist" version="1"/>
 
