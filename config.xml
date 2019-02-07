@@ -35,6 +35,7 @@
 		<plugin name="cordova-plugin-flashlight" spec="*"/>
 		<plugin name="cordova-plugin-extension" spec="*"/>
 		<plugin name="cordova-plugin-whitelist" version="1"/>
+		<plugin name="cordova-plugin-android-volume" spec="*"/>
 
 		<icon src="512x512.png" />
 		
