@@ -51,22 +51,22 @@ shakerMain.prototype = {
 	    	if (circle.y == 0){ // front
 	    		
     			if (volume < LOUD_VOL){
-    				shakerGentle.volume = volume + 0.2;
-    				shakerGentle.play();
+    				frontSfx.volume = volume + 0.2;
+    				frontSfx.play();
 
 					flash(GENTLE_COLOR);	
     			}
     			else {
-    				shakerStrong.volume = volume - (LOUD_VOL / 5);
-    				shakerStrong.play();
+    				frontSfx.volume = volume - (LOUD_VOL / 5);
+    				frontSfx.play();
 
 					flash(LOUD_COLOR);
     			}
     		}
 	    	
 	    	else if (circle.y == HEIGHT - circle.height){ // back    		
-    			shakerBack.volume = volume + 0.2;
-    			shakerBack.play();
+    			backSfx.volume = volume + 0.2;
+    			backSfx.play();
 
 				flash(BACK_COLOR);
 			}	
@@ -176,4 +176,7 @@ function loadSounds(){
 	shakerGentle = game.add.audio('shakerGentle', 1, false);
 	shakerStrong = game.add.audio('shakerStrong', 1, false);
 	shakerBack = game.add.audio('shakerBack', 1, false);
+	
+	frontSfx = game.add.audio('front', 1, false);
+	backSfx = game.add.audio('back', 1, false);
 }
