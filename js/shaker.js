@@ -1,6 +1,6 @@
 var shakerMain = function(game){
 	LOUD_VOL = 1.3;
-	MIN_VOL = 0.158;
+	MIN_VOL = 0.15;
 	
 	LOUD_COLOR = '#f1ead7';
 	GENTLE_COLOR = '#c1ad65';
@@ -51,13 +51,13 @@ shakerMain.prototype = {
 	    	if (circle.y == 0){ // front
 	    		
     			if (volume < LOUD_VOL){
-    				frontSfx.volume = volume + 0.2;
+    				//frontSfx.volume = volume + 0.2;
     				frontSfx.play();
 
 					flash(GENTLE_COLOR);	
     			}
     			else {
-    				frontSfx.volume = volume - (LOUD_VOL / 5);
+    				//frontSfx.volume = volume - (LOUD_VOL / 5);
     				frontSfx.play();
 
 					flash(LOUD_COLOR);
@@ -65,7 +65,7 @@ shakerMain.prototype = {
     		}
 	    	
 	    	else if (circle.y == HEIGHT - circle.height){ // back    		
-    			backSfx.volume = volume + 0.2;
+    			//backSfx.volume = volume + 0.2;
     			backSfx.play();
 
 				flash(BACK_COLOR);
