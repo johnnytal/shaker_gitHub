@@ -1,6 +1,6 @@
 var shakerMain = function(game){
 	LOUD_VOL = 1.3;
-	MIN_VOL = 0.15;
+	MIN_VOL = 0.1;
 	
 	LOUD_COLOR = '#f1ead7';
 	GENTLE_COLOR = '#c1ad65';
@@ -30,7 +30,7 @@ shakerMain.prototype = {
  
         circle.body.collideWorldBounds = true;
         
-        angleText = game.add.text(510, 20, "Shake It!", {font: '26px', fill: 'white'});
+        angleText = game.add.text(510, 20, "Shake It Baby!", {font: '26px', fill: 'white'});
         
         accelText = game.add.text(10, 10, "accel", {font: '26px', fill: 'white'});
         gammaText = game.add.text(10, 50, "gamma", {font: '26px', fill: 'white'});
