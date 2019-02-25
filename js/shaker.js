@@ -1,15 +1,11 @@
 var shakerMain = function(game){
-	LOUD_VOL = 1.3;
-	MIN_VOL = 0.1;
-	
-	LOUD_COLOR = '#f1ead7';
+	//LOUD_COLOR = '#f1ead7';
 	GENTLE_COLOR = '#c1ad65';
 	BACK_COLOR = '#656d7c';
 
 	gamma = 0;
 	accelX = 0;
-	volume = 0;
-	
+
 	accelFactor = 57;
 	gammaFactor = 730;
 	ballFactor = 969;
@@ -23,6 +19,7 @@ var shakerMain = function(game){
 shakerMain.prototype = {
     create: function(){
     	bg = game.add.image(0, 0, 'bg');
+    	bg.alpha = 0.6;
     	
         circles = game.add.group();
 		circles.enableBody = true;
@@ -52,27 +49,14 @@ shakerMain.prototype = {
     		resetTouching = true;
     	}
     	
-    	if (volume > MIN_VOL && resetTouching){	    	
+    	if (resetTouching){    	
 	    	if (circle.y == 0){ // front
-	    		
-    			if (volume < LOUD_VOL){
-    				//frontSfx.volume = volume + 0.2;
-    				frontSfx.play();
-
-					flash(GENTLE_COLOR);	
-    			}
-    			else {
-    				//frontSfx.volume = volume - (LOUD_VOL / 5);
-    				frontSfx.play();
-
-					flash(LOUD_COLOR);
-    			}
+				frontSfx.play();
+				flash(GENTLE_COLOR);	
     		}
 	    	
 	    	else if (circle.y == HEIGHT - circle.height){ // back    		
-    			//backSfx.volume = volume + 0.2;
     			backSfx.play();
-
 				flash(BACK_COLOR);
 			}	
     	}
@@ -81,25 +65,20 @@ shakerMain.prototype = {
 
 function deviceMotion(event){
 	accelX = roundIt(event.acceleration.x);
-	
 	circle.body.velocity.y = accelX * accelFactor;
-	volume = roundIt(Math.abs(accelX / 12));
 }
 
 function handleOrientation(event){
 	gamma = roundIt(event.gamma);  // -90,90 X
-	
 	circle.body.gravity.y = (gamma * gammaFactor) * -1;
 }
 
 function flash(_color){
 	resetTouching = false;
-	
-	//angleText.text = 'gamma: ' + gamma + '\naccel: ' + accelX;
 
 	game.stage.backgroundColor = _color;
 	
-	if (_color == LOUD_COLOR){
+	if (_color == GENTLE_COLOR){
 		window.plugins.flashlight.switchOn();
 	}
 
@@ -108,7 +87,7 @@ function flash(_color){
 			window.plugins.flashlight.switchOff();
 		}
 		game.stage.backgroundColor = '#000000';
-	}, 215);
+	}, 200);
 }
 
 function createUI(){
