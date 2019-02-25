@@ -15,10 +15,15 @@ var shakerMain = function(game){
 	ballFactor = 969;
 
 	resetTouching = true;
+	
+	frontSfx = null;
+	backSfx = null;
 };
 
 shakerMain.prototype = {
     create: function(){
+    	bg = game.add.image(0, 0, 'bg');
+    	
         circles = game.add.group();
 		circles.enableBody = true;
 		circles.physicsBodyType = Phaser.Physics.ARCADE;
@@ -30,16 +35,16 @@ shakerMain.prototype = {
  
         circle.body.collideWorldBounds = true;
         
-        angleText = game.add.text(510, 20, "Shake It Baby!", {font: '26px', fill: 'white'});
+      /*  angleText = game.add.text(510, 20, "Shake It Baby!", {font: '26px', fill: 'white'});
         
         accelText = game.add.text(10, 10, "accel", {font: '26px', fill: 'white'});
         gammaText = game.add.text(10, 50, "gamma", {font: '26px', fill: 'white'});
         ballText = game.add.text(10, 90, "ball", {font: '26px', fill: 'white'});
-        loudText = game.add.text(10, 130, "vol", {font: '26px', fill: 'white'});
+        loudText = game.add.text(10, 130, "vol", {font: '26px', fill: 'white'});*/
 		
 		loadSounds();
 		initPlugIns();
-		createUI();
+		//createUI();
     },
     
     update: function(){
@@ -90,7 +95,7 @@ function handleOrientation(event){
 function flash(_color){
 	resetTouching = false;
 	
-	angleText.text = 'gamma: ' + gamma + '\naccel: ' + accelX;
+	//angleText.text = 'gamma: ' + gamma + '\naccel: ' + accelX;
 
 	game.stage.backgroundColor = _color;
 	
@@ -124,7 +129,7 @@ function createUI(){
 		gammaText.text = 'Gamma: ' + this.value;
 		gammaFactor = this.value;
 	};
-	
+		
 	var sliderBall = document.getElementById("ball");
 	
 	ballText.text = 'Ball: ' + sliderBall.value / 1000;
@@ -157,14 +162,14 @@ function initPlugIns(){
 		window.addEventListener('deviceorientation', handleOrientation);
 	}
 	else{
-		angleText.text = 'orientation not supported';
+		alert('orientation not supported');
 	}
 	
 	if (window.DeviceMotionEvent) {
 	  	window.addEventListener('devicemotion', deviceMotion);
 	}
 	else{
-		angleText.text = 'motion not supported';
+		alert('motion not supported');
 	}
 
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
@@ -177,6 +182,9 @@ function loadSounds(){
 	shakerStrong = game.add.audio('shakerStrong', 1, false);
 	shakerBack = game.add.audio('shakerBack', 1, false);
 	
-	frontSfx = game.add.audio('front', 1, false);
-	backSfx = game.add.audio('back', 1, false);
+	snareFront = game.add.audio('front', 1, false);
+	snareBack = game.add.audio('back', 1, false);
+	
+	frontSfx = shakerGentle;
+	backSfx = shakerBack;
 }
