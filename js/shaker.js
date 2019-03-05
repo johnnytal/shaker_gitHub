@@ -20,7 +20,7 @@ shakerMain.prototype = {
     create: function(){
     	
     	window.plugins.NativeAudio.preloadSimple('frontSfx', 'assets/audio/shakerGentle.mp3', function(msg){}, function(msg){alert(msg)});
-    	window.plugins.NativeAudio.preloadSimple('backSfx', 'aassets/audio/shakerBack.mp3', function(msg){}, function(msg){alert(msg)});
+    	window.plugins.NativeAudio.preloadSimple('backSfx', 'assets/audio/shakerBack.mp3', function(msg){}, function(msg){alert(msg)});
 
     	bg = game.add.image(0, 0, 'bg');
     	bg.alpha = 0.6;
