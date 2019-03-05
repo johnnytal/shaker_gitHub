@@ -18,6 +18,10 @@ var shakerMain = function(game){
 
 shakerMain.prototype = {
     create: function(){
+    	
+    	window.plugins.NativeAudio.preloadSimple('frontSfx', 'assets/audio/shakerGentle.mp3', function(msg){}, function(msg){alert(msg)});
+    	window.plugins.NativeAudio.preloadSimple('backSfx', 'aassets/audio/shakerBack.mp3', function(msg){}, function(msg){alert(msg)});
+
     	bg = game.add.image(0, 0, 'bg');
     	bg.alpha = 0.6;
     	
@@ -51,12 +55,12 @@ shakerMain.prototype = {
     	
     	if (resetTouching){    	
 	    	if (circle.y == 0){ // front
-				frontSfx.play();
+	    		window.plugins.NativeAudio.play('frontSfx');
 				flash(GENTLE_COLOR);	
     		}
 	    	
 	    	else if (circle.y == HEIGHT - circle.height){ // back    		
-    			backSfx.play();
+    			window.plugins.NativeAudio.play('backSfx');
 				flash(BACK_COLOR);
 			}	
     	}
