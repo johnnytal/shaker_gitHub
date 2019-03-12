@@ -103,9 +103,9 @@ function initPlugIns(){
 }
 
 function loadSounds(){	
-	window.plugins.NativeAudio.preloadSimple('frontSfx', 'assets/audio/shakerGentle.mp3', 
+	window.plugins.NativeAudio.preloadSimple('backSfx', 'assets/audio/shakerBack.mp3', 
 	null, function(msg){alert(msg);});
 	
-	window.plugins.NativeAudio.preloadSimple('backSfx', 'assets/audio/shakerBack.mp3', 
+	window.plugins.NativeAudio.preloadSimple('frontSfx', 'assets/audio/shakerGentle.mp3', 
 	null, function(msg){alert(msg);});
 }
