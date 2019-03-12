@@ -28,7 +28,6 @@ shakerMain.prototype = {
  
         circle.body.collideWorldBounds = true;
 
-		loadSounds();
 		initPlugIns();
     },
     
@@ -100,12 +99,4 @@ function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
     try{StatusBar.hide();} catch(e){} // hide status bar
     try{window.androidVolume.setMusic(100, false);} catch(e){} // max media volume
-}
-
-function loadSounds(){	
-	window.plugins.NativeAudio.preloadSimple('backSfx', 'assets/audio/shakerBack.mp3', 
-	null, function(msg){alert(msg);});
-	
-	window.plugins.NativeAudio.preloadSimple('frontSfx', 'assets/audio/shakerGentle.mp3', 
-	null, function(msg){alert(msg);});
 }
