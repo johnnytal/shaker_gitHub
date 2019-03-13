@@ -10,6 +10,9 @@ var shakerMain = function(game){
 	ballFactor = 969;
 
 	resetTouching = true;
+	
+	frontSfx = null;
+	backSfx = null;
 };
 
 shakerMain.prototype = {
@@ -85,12 +88,6 @@ function flash(_color){
 function roundIt(_num){
 	return Math.round(_num * 100) / 100;
 }
-
-function onError(e){
-	alert('error: ' + e);
-}
-
-function onsuccess(){}
 
 function initPlugIns(){
 	if (window.DeviceOrientationEvent) {
