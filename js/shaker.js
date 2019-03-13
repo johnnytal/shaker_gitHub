@@ -10,9 +10,6 @@ var shakerMain = function(game){
 	ballFactor = 969;
 
 	resetTouching = true;
-	
-	var frontSfx; 
-	var backSfx;
 };
 
 shakerMain.prototype = {
