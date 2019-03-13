@@ -10,9 +10,16 @@ var shakerMain = function(game){
 	ballFactor = 969;
 
 	resetTouching = true;
+	
+	var frontSfx, backSfx;
 };
 
 shakerMain.prototype = {
+	preload: function(){
+		frontSfx = new Media('assets/audio/shakerGentle.mp3');
+		backSfx = new Media('assets/audio/shakerBack.mp3');
+	},
+	
     create: function(){
     	bg = game.add.image(0, 0, 'bg');
     	bg.alpha = 0.6;
@@ -38,12 +45,12 @@ shakerMain.prototype = {
     	
     	if (resetTouching){    	
 	    	if (circle.y == 0){ // front
-	    		window.plugins.NativeAudio.play('frontSfx');
+	    		frontSfx.play(); 
 				flash(GENTLE_COLOR);	
     		}
 	    	
 	    	else if (circle.y == HEIGHT - circle.height){ // back    		
-    			window.plugins.NativeAudio.play('backSfx');
+    			backSfx.play(); 
 				flash(BACK_COLOR);
 			}	
     	}
