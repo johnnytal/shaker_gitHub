@@ -17,8 +17,8 @@ var shakerMain = function(game){
 
 shakerMain.prototype = {
 	preload: function(){
-		frontSfx = new Media('assets/audio/shakerGentle.mp3', onError, onSuccess);
-		backSfx = new Media('assets/audio/shakerBack.mp3', onError, onSuccess);
+		frontSfx = new Media('assets/audio/shakerGentle.mp3', onsuccess, onError);
+		backSfx = new Media('assets/audio/shakerBack.mp3', onsuccess, onError);
 	},
 	
     create: function(){
@@ -92,7 +92,8 @@ function roundIt(_num){
 function onError(e){
 	alert('error: ' + e);
 }
-function onSuccess(){}
+
+function onsuccess(){}
 
 function initPlugIns(){
 	if (window.DeviceOrientationEvent) {
