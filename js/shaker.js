@@ -11,13 +11,14 @@ var shakerMain = function(game){
 
 	resetTouching = true;
 	
-	var frontSfx, backSfx;
+	var frontSfx; 
+	var backSfx;
 };
 
 shakerMain.prototype = {
 	preload: function(){
-		frontSfx = new Media('assets/audio/shakerGentle.mp3');
-		backSfx = new Media('assets/audio/shakerBack.mp3');
+		frontSfx = new Media('assets/audio/shakerGentle.mp3', null, onError);
+		backSfx = new Media('assets/audio/shakerBack.mp3', null, onError);
 	},
 	
     create: function(){
@@ -86,6 +87,10 @@ function flash(_color){
 
 function roundIt(_num){
 	return Math.round(_num * 100) / 100;
+}
+
+function onError(e){
+	alert('error: ' + e);
 }
 
 function initPlugIns(){
