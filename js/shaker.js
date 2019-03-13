@@ -17,8 +17,8 @@ var shakerMain = function(game){
 
 shakerMain.prototype = {
 	preload: function(){
-		frontSfx = new Media('assets/audio/shakerGentle.mp3', onsuccess, onError);
-		backSfx = new Media('assets/audio/shakerBack.mp3', onsuccess, onError);
+		frontSfx = new Media('assets/audio/shakerGentle.mp3');
+		backSfx = new Media('assets/audio/shakerBack.mp3');
 	},
 	
     create: function(){
