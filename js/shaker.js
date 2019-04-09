@@ -32,6 +32,8 @@ shakerMain.prototype = {
 	    debugText = game.add.text(50, 50, "" , {font: '24px', fill: 'white'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
+		
+		initPlugIns();
     }
 };
 
@@ -133,4 +135,10 @@ function XtraUIbuttons(){
 
 function roundIt(_num){
 	return Math.round(_num * 100) / 100;
+}
+
+function initPlugIns(){
+    try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
+    try{StatusBar.hide();} catch(e){} // hide status bar
+    try{window.androidVolume.setMusic(100, false);} catch(e){} // max media volume
 }
