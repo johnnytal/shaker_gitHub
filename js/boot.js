@@ -18,9 +18,6 @@ var boot = function(game){};
   
 boot.prototype = {
     create: function(){
-    	
-    	game.stage.backgroundColor = '#000000';
-    	
         if (this.game.device.desktop){
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         } 

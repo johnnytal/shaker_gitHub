@@ -45,22 +45,19 @@ function readAngle(event){
 	if (!resetTouching && angle > ((INIT_BACK + backAngle) + 0.75) && angle < ((INIT_FRONT + frontAngle) - 0.75)){
 			resetTouching = true;
 	}
-	
-	if (game.state.getCurrentState().key == 'Shaker'){
 
-		if (angle > (INIT_FRONT + frontAngle) && (lastPlayed == 'back' || resetTouching)){
-			frontSfx.play();
-			flash(FRONT_COLOR);	
-			
-			lastPlayed = 'front';
-		}
-		else if (angle < (INIT_BACK + backAngle) && (lastPlayed == 'front' || resetTouching)){
-			backSfx.play();
-			flash(BACK_COLOR);
-			
-			lastPlayed = 'back';
-		}	
+	if (angle > (INIT_FRONT + frontAngle) && (lastPlayed == 'back' || resetTouching)){ // front angle
+		frontSfx.play();
+		flash(FRONT_COLOR);	
+		
+		lastPlayed = 'front';
 	}
+	else if (angle < (INIT_BACK + backAngle) && (lastPlayed == 'front' || resetTouching)){ // back angle
+		backSfx.play();
+		flash(BACK_COLOR);
+		
+		lastPlayed = 'back';
+	}	
 }
 
 function flash(_color){
@@ -75,7 +72,7 @@ function flash(_color){
 	
 	navigator.vibrate(22);
 
-	setTimeout(function(){
+	setTimeout(function(){ // back to normal
 		if (window.plugins.flashlight.isSwitchedOn()){
 			window.plugins.flashlight.switchOff();
 		}
@@ -85,7 +82,7 @@ function flash(_color){
 	}, 75);
 }
 
-function XtraUIbuttons(){
+function XtraUIbuttons(){ // for debugging - change the front and back angles
     plus = game.add.sprite(620, 300, 'plus');
     plus.scale.set(.85, .85);
     plus.alpha = 0.85;
