@@ -8,13 +8,15 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel = 1.8;
+	min_accel_front = 2;
+	min_accel_back = 1.5;
 	
 	lastTenAccels = [];
 	lastTenAngles = [];
 
 	angle = 0;
-	min_angle = 3.6;
+	min_angle_front = 3.6;
+	min_angle_back = 1.2;
 	
 	last_hit = '';
 };
@@ -33,8 +35,8 @@ shakerMain.prototype = {
 	    
 	    debugTxtLastHit = game.add.text(20, 200, "last hit" , {font: '22px', fill: 'lightgrey'});
 	    
-	    debugTxtLastTenAccels = game.add.text(10, 330, "Accels:" ,{font: '22px', fill: 'white'});
-	    debugTxtLastTenAngles = game.add.text(10, 360, "Angles:" ,{font: '22px', fill: 'white'});
+	    debugTxtLastTenAccels = game.add.text(10, 335, "Accels:" ,{font: '22px', fill: 'white'});
+	    debugTxtLastTenAngles = game.add.text(10, 365, "Angles:" ,{font: '22px', fill: 'white'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
@@ -69,14 +71,17 @@ function readAcc(event){
 	}
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying){
-		if (Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel){ 
-			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] > min_angle){ 
+		if (Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel_front){ 
+			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] > min_angle_front){ 
 				frontSfx.play();
 				
 				last_hit = 'FRONT';
 				flash(FRONT_COLOR);	
 			}
-			else if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -(min_angle / 8)){
+		}
+		
+		else if(Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel_back){
+			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -min_angle_back){
 				backSfx.play();
 				
 				last_hit = 'BACK';
@@ -113,34 +118,32 @@ function flash(_color){
 }
 
 function XtraUIbuttons(){
-    plus = game.add.sprite(620, 250, 'plus');
-    plus.alpha = 0.85;
+    plus = game.add.sprite(620, 240, 'plus');
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
-    	min_accel += 0.05;
-    	backText.text = "accel: " + roundIt(min_accel);
+    	min_accel_front += 0.05;
+    	backText.text = "accel front: " + roundIt(min_accel_front);
     	plus.tint = 0xf04030;
     	setTimeout(function(){plus.tint = 0xffffff;}, 100);
     }, this);
     
-    minus = game.add.sprite(525, 250, 'minus');
-    minus.alpha = 0.85;
+    minus = game.add.sprite(525, 240, 'minus');
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
-    	min_accel -= 0.05;
-    	backText.text = "accel: " + roundIt(min_accel);
+    	min_accel_front -= 0.05;
+    	backText.text = "accel front: " + roundIt(min_accel_front);
     	minus.tint = 0xf04030;
     	setTimeout(function(){minus.tint = 0xffffff;}, 100);
     }, this);
-        
-    backText = game.add.text(540, 200, "accel: " + roundIt(min_accel),
+    
+    backText = game.add.text(540, 190, "accel front: " + roundIt(min_accel_front),
     {font: '24px', fill: 'white'});
 
     plusD = game.add.sprite(620, 80, 'plus');
     plusD.inputEnabled = true;
     plusD.events.onInputDown.add(function(){
-    	min_angle += 0.05;
-    	frontText.text = "angle: " + roundIt(min_angle);
+    	min_angle_front += 0.05;
+    	frontText.text = "angle front: " + roundIt(min_angle_front);
     	plusD.tint = 0xf04030;
     	setTimeout(function(){plusD.tint = 0xffffff;}, 100);
     }, this);
@@ -148,13 +151,57 @@ function XtraUIbuttons(){
     minusD = game.add.sprite(525, 80, 'minus');
     minusD.inputEnabled = true;
     minusD.events.onInputDown.add(function(){
-    	min_angle -= 0.05;
-    	frontText.text = "angle: " + roundIt(min_angle);
+    	min_angle_front -= 0.05;
+    	frontText.text = "angle front: " + roundIt(min_angle_front);
     	minusD.tint = 0xf04030;
     	setTimeout(function(){minusD.tint = 0xffffff;}, 100);
     }, this);
 	
-    frontText = game.add.text(545, 30, "angle: " + roundIt(min_angle),
+    frontText = game.add.text(540, 30, "angle front: " + roundIt(min_angle_front),
+    {font: '24px', fill: 'white'});
+    
+    ///////
+    
+    plus2 = game.add.sprite(320, 240, 'plus');
+    plus2.inputEnabled = true;
+    plus2.events.onInputDown.add(function(){
+    	min_accel_back += 0.05;
+    	backText2.text = "accel back: " + roundIt(min_accel_back);
+    	plus2.tint = 0xf04030;
+    	setTimeout(function(){plus2.tint = 0xffffff;}, 100);
+    }, this);
+    
+    minus2 = game.add.sprite(225, 240, 'minus');
+    minus2.inputEnabled = true;
+    minus2.events.onInputDown.add(function(){
+    	min_accel_back -= 0.05;
+    	backText2.text = "accel back: " + roundIt(min_accel_back);
+    	minus2.tint = 0xf04030;
+    	setTimeout(function(){minus2.tint = 0xffffff;}, 100);
+    }, this);
+        
+    backText2 = game.add.text(240, 190, "accel back: " + roundIt(min_accel_back),
+    {font: '24px', fill: 'white'});
+
+    plusD2 = game.add.sprite(320, 80, 'plus');
+    plusD2.inputEnabled = true;
+    plusD2.events.onInputDown.add(function(){
+    	min_angle_back += 0.05;
+    	frontText2.text = "angle back: " + roundIt(min_angle_back);
+    	plusD2.tint = 0xf04030;
+    	setTimeout(function(){plusD2.tint = 0xffffff;}, 100);
+    }, this);
+    
+    minusD2 = game.add.sprite(225, 80, 'minus');
+    minusD2.inputEnabled = true;
+    minusD2.events.onInputDown.add(function(){
+    	min_angle_back -= 0.05;
+    	frontText2.text = "angle back: " + roundIt(min_angle_back);
+    	minusD2.tint = 0xf04030;
+    	setTimeout(function(){minusD2.tint = 0xffffff;}, 100);
+    }, this);
+	
+    frontText2 = game.add.text(240, 30, "angle back: " + roundIt(min_angle_back),
     {font: '24px', fill: 'white'});
 }
 
