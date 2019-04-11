@@ -6,11 +6,11 @@ var shakerMain = function(game){
 	resetTouching = true;
 
 	aveAccel = 0;
-	min_accel = 8;
+	min_accel = 6;
 	
 	angle = 0;
-	MIN_FRONT_ANGLE = 15;
-	MIN_BACK_ANGLE = 3;
+	MIN_FRONT_ANGLE = 17;
+	MIN_BACK_ANGLE = 9;
 };
 
 shakerMain.prototype = {
@@ -19,11 +19,11 @@ shakerMain.prototype = {
  
 		XtraUIbuttons();
 		
-	    debugTxtAngle = game.add.text(20, 5, "Angle" , {font: '21px', fill: 'white'});
-	    debugTxtAccel = game.add.text(100, 5, "Accel" , {font: '21px', fill: 'lightgreen'});
+	    debugTxtAngle = game.add.text(20, 15, "Angle" , {font: '21px', fill: 'white'});
+	    debugTxtAccel = game.add.text(20, 40, "Accel" , {font: '21px', fill: 'lightgreen'});
 	    
 	    debugTxtHitAngle = game.add.text(20, 75, "Angle at hit" , {font: '21px', fill: 'white'});
-	    debugTxtHitAccel = game.add.text(100, 75, "Accel at hit" , {font: '21px', fill: 'lightgreen'});
+	    debugTxtHitAccel = game.add.text(20, 100, "Accel at hit" , {font: '21px', fill: 'lightgreen'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
@@ -35,7 +35,7 @@ shakerMain.prototype = {
 function readAngle(event){	
 	angle = roundIt(event.gamma);
 
-	debugTxtAngle.text = 'Angle = ' + angle;
+	debugTxtAngle.text = 'Angle: ' + angle;
 }
 
 function readAcc(event){
@@ -45,9 +45,9 @@ function readAcc(event){
 	
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 	
-	debugTxtAccel.text = 'Accel = ' + aveAccel;
+	debugTxtAccel.text = 'Accel: ' + aveAccel;
 	
-	if (angle > MIN_BACK_ANGLE + 1 && angle < MIN_FRONT_ANGLE - 1){
+	if (angle > MIN_BACK_ANGLE + 0.75 && angle < MIN_FRONT_ANGLE - 0.75){
 		resetTouching = true;
 	}
 	
@@ -64,8 +64,8 @@ function readAcc(event){
 }
 
 function flash(_color){
-	debugTxtHitAngle.text = angle;
-	debugTxtHitAccel.text = aveAccel;
+	debugTxtHitAngle.text = 'Angle at hit: ' + angle;
+	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel;
 	
 	resetTouching = false;
 	
@@ -95,7 +95,7 @@ function XtraUIbuttons(){
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
     	min_accel += 0.1;
-    	frontText.text = "Accel: " + roundIt(min_accel);
+    	frontText.text = "min. accel: " + roundIt(min_accel);
     	plus.tint = 0xf04030;
     	setTimeout(function(){plus.tint = 0xffffff;},100);
     }, this);
@@ -106,7 +106,7 @@ function XtraUIbuttons(){
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
     	min_accel -= 0.1;
-    	frontText.text = "Accel: " + roundIt(min_accel);
+    	frontText.text = "min. accel: " + roundIt(min_accel);
     	minus.tint = 0xf04030;
     	setTimeout(function(){minus.tint = 0xffffff;},100);
     }, this);
@@ -155,5 +155,5 @@ function roundIt(_num){
 function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
     try{StatusBar.hide();} catch(e){} // hide status bar
-    try{window.androidVolume.setMusic(15, false);} catch(e){} // max media volume
+    try{window.androidVolume.setMusic(10, false);} catch(e){} // max media volume
 }
