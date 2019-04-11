@@ -50,7 +50,7 @@ shakerMain.prototype = {
 function readAngle(event){	
 	angle = roundIt(event.gamma);
 
-	debugTxtAngle.text = 'Angle: ' + angle + '  (min front ' + MIN_FRONT_ANGLE + ', min back ' + MIN_BACK_ANGLE + ')';
+	debugTxtAngle.text = 'Angle: ' + angle;
 	
 	lastTenAngles.push(angle);
 	if (lastTenAngles.length > 6) {
@@ -129,7 +129,7 @@ function XtraUIbuttons(){
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
     	min_accel += 0.05;
-    	backText.text = "accel" + roundIt(min_accel_back);
+    	backText.text = "accel: " + roundIt(min_accel);
     	plus.tint = 0xf04030;
     	setTimeout(function(){plus.tint = 0xffffff;}, 100);
     }, this);
@@ -140,12 +140,12 @@ function XtraUIbuttons(){
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
     	min_accel -= 0.05;
-    	backText.text = "accel" + roundIt(min_accel_back);
+    	backText.text = "accel: " + roundIt(min_accel);
     	minus.tint = 0xf04030;
     	setTimeout(function(){minus.tint = 0xffffff;}, 100);
     }, this);
         
-    backText = game.add.text(540, 180, "accel" + roundIt(min_accel),
+    backText = game.add.text(540, 180, "accel: " + roundIt(min_accel),
     {font: '24px', fill: 'white'});
 
     plusD = game.add.sprite(620, 60, 'plus');
@@ -168,7 +168,7 @@ function XtraUIbuttons(){
     	setTimeout(function(){minusD.tint = 0xffffff;}, 100);
     }, this);
 	
-    frontText = game.add.text(545, 10, "accel front: " + roundIt(min_angle),
+    frontText = game.add.text(545, 10, "angle: " + roundIt(min_angle),
     {font: '24px', fill: 'white'});
 }
 
