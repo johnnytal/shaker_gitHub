@@ -9,7 +9,9 @@ var shakerMain = function(game){
 	accelX = 0;
 	accelY = 0;
 	accelZ = 0;
-	min_accel = 5.5;
+	
+	min_accel_front = 4.8;
+	min_accel_back = -5.2;
 
 	angle = 0;
 	MIN_FRONT_ANGLE = 18;
@@ -42,24 +44,24 @@ function readAngle(event){
 }
 
 function readAcc(event){
-	accelX = event.accelerationIncludingGravity.x;
-	accelY = event.accelerationIncludingGravity.y;
-	accelZ = event.accelerationIncludingGravity.z;
+	accelX = roundIt(event.accelerationIncludingGravity.x);
+	accelY = roundIt(event.accelerationIncludingGravity.y);
+	accelZ = roundIt(event.accelerationIncludingGravity.z);
 	
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 	
-	debugTxtAccel.text = 'Accel: ' + aveAccel + '  (X: ' + accelX + ' Y: ' + accelY + ' Z: ' + accelZ + ')';
+	debugTxtAccel.text = 'Accel: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';
 	
 	if (angle > MIN_BACK_ANGLE + 1 && angle < MIN_FRONT_ANGLE - 1){
 		resetTouching = true;
 	}
 	
 	if (resetTouching && !frontSfx.isPlaying && !backSfx.isPlaying){
-		if (aveAccel < -min_accel && MIN_BACK_ANGLE <= angle){ // && current accel smaller then last accel
+		if (aveAccel < min_accel_back && MIN_BACK_ANGLE <= angle){ // && current accel smaller then last accel
 			frontSfx.play();
 			flash(FRONT_COLOR);
 		}
-		else if (aveAccel > min_accel && MIN_FRONT_ANGLE >= angle){
+		else if (aveAccel > min_accel_front && MIN_FRONT_ANGLE >= angle){
 			backSfx.play();
 			flash(BACK_COLOR);
 		}
@@ -68,7 +70,7 @@ function readAcc(event){
 
 function flash(_color){
 	debugTxtHitAngle.text = 'Angle at hit: ' + angle;
-	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '  (X: ' + accelX + ' Y: ' + accelY + ' Z: ' + accelZ + ')';;
+	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';;
 	
 	resetTouching = false;
 	
@@ -97,10 +99,10 @@ function XtraUIbuttons(){
     plus.alpha = 0.85;
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
-    	min_accel += 0.1;
-    	frontText.text = "min. accel: " + roundIt(min_accel);
+    	min_accel_back += 0.05;
+    	backText.text = "accel back: " + roundIt(min_accel_back);
     	plus.tint = 0xf04030;
-    	setTimeout(function(){plus.tint = 0xffffff;},100);
+    	setTimeout(function(){plus.tint = 0xffffff;}, 100);
     }, this);
     
     minus = game.add.sprite(525, 300, 'minus');
@@ -108,36 +110,35 @@ function XtraUIbuttons(){
     minus.alpha = 0.85;
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
-    	min_accel -= 0.1;
-    	frontText.text = "min. accel: " + roundIt(min_accel);
+    	min_accel_back -= 0.05;
+    	backText.text = "accel back: " + roundIt(min_accel_back);
     	minus.tint = 0xf04030;
-    	setTimeout(function(){minus.tint = 0xffffff;},100);
+    	setTimeout(function(){minus.tint = 0xffffff;}, 100);
     }, this);
         
-    frontText = game.add.text(540, 250, "min. accel: " + roundIt(min_accel),
+    backText = game.add.text(540, 250, "accel back: " + roundIt(min_accel_back),
     {font: '24px', fill: 'white'});
-    
-    /*
+
     plusD = game.add.sprite(620, 100, 'plus');
     plusD.inputEnabled = true;
     plusD.events.onInputDown.add(function(){
-    	backAngle += 0.1;
-    	backText.text = "BACK: " + roundIt(INIT_BACK + backAngle);
+    	min_accel_front += 0.05;
+    	frontText.text = "accel front: " + roundIt(min_accel_front);
     	plusD.tint = 0xf04030;
-    	setTimeout(function(){plusD.tint = 0xffffff;},100);
+    	setTimeout(function(){plusD.tint = 0xffffff;}, 100);
     }, this);
     
     minusD = game.add.sprite(525, 100, 'minus');
     minusD.inputEnabled = true;
     minusD.events.onInputDown.add(function(){
-    	backAngle -= 0.1;
-    	backText.text = "BACK: " + roundIt(INIT_BACK + backAngle);
+    	min_accel_front -= 0.05;
+    	frontText.text = "accel front: " + roundIt(min_accel_front);
     	minusD.tint = 0xf04030;
-    	setTimeout(function(){minusD.tint = 0xffffff;},100);
+    	setTimeout(function(){minusD.tint = 0xffffff;}, 100);
     }, this);
 	
-    backText = game.add.text(545, 50, "BACK: " + roundIt(INIT_BACK + backAngle),
-    {font: '24px', fill: 'white'});*/
+    frontText = game.add.text(545, 50, "accel front: " + roundIt(min_accel_front),
+    {font: '24px', fill: 'white'});
 }
 
 function initVars(){
