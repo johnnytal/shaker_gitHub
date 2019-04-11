@@ -32,7 +32,7 @@ shakerMain.prototype = {
 	    debugTxtHitAngle = game.add.text(20, 85, "Angle at hit" , {font: '21px', fill: 'white'});
 	    debugTxtHitAccel = game.add.text(20, 115, "Accel at hit" , {font: '21px', fill: 'white'});
 	    
-	    debugTxtLastHit = game.add.text(20, 145, "last hit" , {font: '22px', fill: 'grey'});
+	    debugTxtLastHit = game.add.text(20, 175, "last hit" , {font: '22px', fill: 'grey'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
@@ -81,7 +81,7 @@ function flash(_color){
 	debugTxtHitAngle.text = 'Angle at hit: ' + angle;
 	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';;
 	
-	debugTxtLastHit = 'Last hit: ' + last_hit;
+	debugTxtLastHit.text = 'Last hit: ' + last_hit;
 	
 	resetTouching = false;
 	
