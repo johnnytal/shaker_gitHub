@@ -58,7 +58,7 @@ function readAngle(event){
 	if (lastTenAngles.length > 10) {
     	lastTenAngles.shift();
 	}
-	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles;
+	
 }
 
 function readAcc(event){
@@ -69,13 +69,12 @@ function readAcc(event){
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 	
 	lastTenAccels.push(aveAccel);
-	if (lastTenAccels.length > 10) {
+	if (lastTenAccels.length > 12) {
     	lastTenAccels.shift();
 	}
-	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels;
-	
-	debugTxtAccel.text = 'Accel: ' + Math.round(aveAccel * 10) / 10 +
-	'  (X: ' + Math.round(accelX) + ',  Y: ' + Math.round(accelY) + ',  Z: ' + Math.round(accelZ) + ')';
+
+	debugTxtAccel.text = 'Accel: ' + roundIt(aveAccel) +
+	'  (X: ' + roundIt(accelX) + ',  Y: ' + roundIt(accelY) + ',  Z: ' + roundIt(accelZ) + ')';
 	
 	if (angle > MIN_BACK_ANGLE + 2 && angle < MIN_FRONT_ANGLE - 2){
 		resetTouching = true;
@@ -102,6 +101,9 @@ function flash(_color){
 	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';;
 	
 	debugTxtLastHit.text = 'Last hit: ' + last_hit;
+	
+	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles;
+	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels;
 
 	resetTouching = false;
 	
