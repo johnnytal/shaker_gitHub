@@ -9,17 +9,17 @@ var shakerMain = function(game){
 	
 	lastPlayed = null;
 
-	INIT_FRONT = 22;
-	INIT_BACK = -3;
+	INIT_ACCEL = 10;
+	
+	angle = 0;
+	MIN_FRONT_ANGLE = 15;
+	MIN_BACK_ANGLE = 3;
 };
 
 shakerMain.prototype = {
     create: function(){
     	game.stage.backgroundColor = '#002255';
 
-    	bg = game.add.image(0, 0, 'bg');
-    	bg.alpha = 0.6;
-    	
 	    backSfx = game.add.audio('back');
     	frontSfx = game.add.audio('front'); 
 
@@ -29,34 +29,44 @@ shakerMain.prototype = {
  
 		XtraUIbuttons();
 		
-	    debugText = game.add.text(50, 50, "" , {font: '24px', fill: 'white'});
+	    debugTxtAngle = game.add.text(20, 5, "Angle" , {font: '21px', fill: 'white'});
+	    debugTxtAccel = game.add.text(100, 5, "Accel" , {font: '21px', fill: 'lightgreen'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
-		
+		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
+
 		initPlugIns();
     }
 };
 
 function readAngle(event){	
 	angle = roundIt(event.gamma);
-	
-	debugText.text = 'Angle: ' + angle;
-	
-	if (!resetTouching && angle > ((INIT_BACK + backAngle) + 0.75) && angle < ((INIT_FRONT + frontAngle) - 0.75)){
-			resetTouching = true;
-	}
 
-	if (angle > (INIT_FRONT + frontAngle) && (lastPlayed == 'back' || resetTouching)){ // front angle
-		frontSfx.play();
-		flash(FRONT_COLOR);	
-		
-		lastPlayed = 'front';
+	debugTxtAngle.text += '\n' + angle;
+}
+
+function readAcc(event){
+	accelX = event.accelerationIncludingGravity.x;
+	accelY = event.accelerationIncludingGravity.y;
+	accelZ = event.accelerationIncludingGravity.z;
+	
+	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
+	
+	debugTxtAccel += '\n' + aveAccel;
+	
+	if (angle > MIN_BACK_ANGLE + 1 && angle < MIN_FRONT_ANGLE - 1){
+		resetTouching = true;
 	}
-	else if (angle < (INIT_BACK + backAngle) && (lastPlayed == 'front' || resetTouching)){ // back angle
-		backSfx.play();
-		flash(BACK_COLOR);
-		
-		lastPlayed = 'back';
+	
+	if (resetTouching){
+		if (aveAccel > INIT_ACCEL && MIN_FRONT_ANGLE >= angle){ // && current accel smaller then last accel
+			frontSfx.play();
+			flash(FRONT_COLOR);
+		}
+		else if (aveAccel < -INIT_ACCEL && MIN_BACK_ANGLE <= angle){
+			backSfx.play();
+			flash(BACK_COLOR);
+		}
 	}	
 }
 
@@ -80,6 +90,9 @@ function flash(_color){
 		circle.tint = 0xffffff;
 		game.stage.backgroundColor = '#000000';
 	}, 75);
+	
+	debugTxtAccel = '';
+	debugTxtAngle = '';
 }
 
 function XtraUIbuttons(){ // for debugging - change the front and back angles
@@ -89,7 +102,7 @@ function XtraUIbuttons(){ // for debugging - change the front and back angles
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
     	frontAngle += 0.1;
-    	frontText.text = "FRONT: " + roundIt(INIT_FRONT + frontAngle);
+    	frontText.text = "Accel: " + roundIt(INIT_ACCEL);
     	plus.tint = 0xf04030;
     	setTimeout(function(){plus.tint = 0xffffff;},100);
     }, this);
@@ -100,11 +113,16 @@ function XtraUIbuttons(){ // for debugging - change the front and back angles
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
     	frontAngle -= 0.1;
-    	frontText.text = "FRONT: " + roundIt(INIT_FRONT + frontAngle);
+    	frontText.text = "Accel: " + roundIt(INIT_ACCEL);
     	minus.tint = 0xf04030;
     	setTimeout(function(){minus.tint = 0xffffff;},100);
     }, this);
-     
+        
+    frontText = game.add.text(545, 250, "Accel: " + roundIt(INIT_ACCEL),
+    {font: '24px', fill: 'white'});
+    
+    /*
+    
     plusD = game.add.sprite(620, 100, 'plus');
     plusD.inputEnabled = true;
     plusD.events.onInputDown.add(function(){
@@ -124,10 +142,7 @@ function XtraUIbuttons(){ // for debugging - change the front and back angles
     }, this);
 	
     backText = game.add.text(545, 50, "BACK: " + roundIt(INIT_BACK + backAngle),
-    {font: '24px', fill: 'white'});
-    
-    frontText = game.add.text(545, 250, "FRONT: " + roundIt(INIT_FRONT + frontAngle),
-    {font: '24px', fill: 'white'});
+    {font: '24px', fill: 'white'});*/
 }
 
 function roundIt(_num){

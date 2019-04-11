@@ -3,8 +3,7 @@ var preloader = function(game){};
 preloader.prototype = {
     preload: function(){
         game.load.image('circle', 'assets/images/shaker.png');
-        game.load.image('bg', 'assets/images/bg.png');
-        
+
         game.load.image('plus', 'assets/images/plus.png');
         game.load.image('minus', 'assets/images/minus.png');
         
