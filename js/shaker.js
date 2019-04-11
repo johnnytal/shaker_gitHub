@@ -10,7 +10,7 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel_front = 4.8;
+	min_accel_front = 2.6;
 	min_accel_back = -5.2;
 
 	angle = 0;
@@ -44,13 +44,14 @@ function readAngle(event){
 }
 
 function readAcc(event){
-	accelX = roundIt(event.accelerationIncludingGravity.x);
-	accelY = roundIt(event.accelerationIncludingGravity.y);
-	accelZ = roundIt(event.accelerationIncludingGravity.z);
+	accelX = roundIt(event.acceleration.x);
+	accelY = roundIt(event.acceleration.y);
+	accelZ = roundIt(event.acceleration.z);
 	
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 	
-	debugTxtAccel.text = 'Accel: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';
+	debugTxtAccel.text = 'Accel: ' + Math.round(aveAccel * 10) / 10;
+	'  (X: ' + Math.round(accelX) + ',  Y: ' + Math.round(accelY) + ',  Z: ' + Math.round(accelZ) + ')';
 	
 	if (angle > MIN_BACK_ANGLE + 1 && angle < MIN_FRONT_ANGLE - 1){
 		resetTouching = true;
