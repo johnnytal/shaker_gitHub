@@ -3,46 +3,43 @@ var shakerMain = function(game){
 	BACK_COLOR = '#656d7c';	
 	DEFAULT_COLOR = '#002255';
 
-	resetTouching = true;
-
 	aveAccel = 0;
 	accelX = 0;
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel = 2.5;
+	min_accel = 1.8;
 	
 	lastTenAccels = [];
 	lastTenAngles = [];
 
 	angle = 0;
-	min_angle = 4;
+	min_angle = 3.6;
 	
 	last_hit = '';
 };
 
 shakerMain.prototype = {
     create: function(){
-		initVars();
+		game.stage.backgroundColor = DEFAULT_COLOR;
+
+		backSfx = game.add.audio('back');
+		frontSfx = game.add.audio('front');
+
+	    debugTxtAngle = game.add.text(20, 15, "Angle" , {font: '22px', fill: 'lightgreen'});
  
-		XtraUIbuttons();
-		
-	    debugTxtAngle = game.add.text(20, 15, "Angle" , {font: '21px', fill: 'lightgreen'});
-	    //debugTxtAccel = game.add.text(20, 45, "Accel" , {font: '21px', fill: 'lightgreen'});
-	    
-	    debugTxtHitAngle = game.add.text(20, 85, "Angle at hit" , {font: '21px', fill: 'white'});
-	    debugTxtHitAccel = game.add.text(20, 115, "Accel at hit" , {font: '21px', fill: 'white'});
+	    debugTxtHitAngle = game.add.text(20, 85, "Angle at hit" , {font: '22px', fill: 'white'});
+	    debugTxtHitAccel = game.add.text(20, 115, "Accel at hit" , {font: '22px', fill: 'white'});
 	    
 	    debugTxtLastHit = game.add.text(20, 200, "last hit" , {font: '22px', fill: 'lightgrey'});
 	    
-	    debugTxtLastTenAccels = game.add.text(10, 330, "Accels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
-	    {font: '21px', fill: 'white'});
-	    debugTxtLastTenAngles = game.add.text(10, 360, "Angles: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
-	    {font: '21px', fill: 'white'});
+	    debugTxtLastTenAccels = game.add.text(10, 330, "Accels:" ,{font: '22px', fill: 'white'});
+	    debugTxtLastTenAngles = game.add.text(10, 360, "Angles:" ,{font: '22px', fill: 'white'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
 
+		XtraUIbuttons();
 		initPlugIns();
     }
 };
@@ -53,7 +50,7 @@ function readAngle(event){
 	debugTxtAngle.text = 'Angle: ' + angle;
 	
 	lastTenAngles.push(angle);
-	if (lastTenAngles.length > 6) {
+	if (lastTenAngles.length > 8) {
     	lastTenAngles.shift();
 	}
 	
@@ -67,12 +64,9 @@ function readAcc(event){
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 	
 	lastTenAccels.push(aveAccel);
-	if (lastTenAccels.length > 6) {
+	if (lastTenAccels.length > 8) {
     	lastTenAccels.shift();
 	}
-
-	/*debugTxtAccel.text = 'Accel: ' + roundIt(aveAccel) +
-	'  (X: ' + roundIt(accelX) + ',  Y: ' + roundIt(accelY) + ',  Z: ' + roundIt(accelZ) + ')';*/
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying){
 		if (Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel){ 
@@ -82,7 +76,7 @@ function readAcc(event){
 				last_hit = 'FRONT';
 				flash(FRONT_COLOR);	
 			}
-			else if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -(min_angle / 4)){
+			else if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -(min_angle / 8)){
 				backSfx.play();
 				
 				last_hit = 'BACK';
@@ -98,33 +92,28 @@ function flash(_color){
 	
 	debugTxtLastHit.text = 'Last hit: ' + last_hit;
 	
-	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles;
-	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels;
+	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels.join(', ');
+	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles.join(', ');
 
-	resetTouching = false;
-	
 	game.stage.backgroundColor = _color;
-	circle.tint = 0xff00df;
 
 	if (_color == FRONT_COLOR){
 		window.plugins.flashlight.switchOn();	
 	}
 	
-	navigator.vibrate(22);
+	navigator.vibrate(40);
 
 	setTimeout(function(){ // back to normal
 		if (window.plugins.flashlight.isSwitchedOn()){
 			window.plugins.flashlight.switchOff();
 		}
 		
-		circle.tint = 0xffffff;
 		game.stage.backgroundColor = DEFAULT_COLOR;
 	}, 75);
 }
 
 function XtraUIbuttons(){
-    plus = game.add.sprite(620, 230, 'plus');
-    plus.scale.set(.85, .85);
+    plus = game.add.sprite(620, 250, 'plus');
     plus.alpha = 0.85;
     plus.inputEnabled = true;
     plus.events.onInputDown.add(function(){
@@ -134,8 +123,7 @@ function XtraUIbuttons(){
     	setTimeout(function(){plus.tint = 0xffffff;}, 100);
     }, this);
     
-    minus = game.add.sprite(525, 230, 'minus');
-    minus.scale.set(.85, .85);
+    minus = game.add.sprite(525, 250, 'minus');
     minus.alpha = 0.85;
     minus.inputEnabled = true;
     minus.events.onInputDown.add(function(){
@@ -145,11 +133,10 @@ function XtraUIbuttons(){
     	setTimeout(function(){minus.tint = 0xffffff;}, 100);
     }, this);
         
-    backText = game.add.text(540, 180, "accel: " + roundIt(min_accel),
+    backText = game.add.text(540, 200, "accel: " + roundIt(min_accel),
     {font: '24px', fill: 'white'});
 
-    plusD = game.add.sprite(620, 60, 'plus');
-    plusD.scale.set(.85, .85);
+    plusD = game.add.sprite(620, 80, 'plus');
     plusD.inputEnabled = true;
     plusD.events.onInputDown.add(function(){
     	min_angle += 0.05;
@@ -158,8 +145,7 @@ function XtraUIbuttons(){
     	setTimeout(function(){plusD.tint = 0xffffff;}, 100);
     }, this);
     
-    minusD = game.add.sprite(525, 60, 'minus');
-    minusD.scale.set(.85, .85);
+    minusD = game.add.sprite(525, 80, 'minus');
     minusD.inputEnabled = true;
     minusD.events.onInputDown.add(function(){
     	min_angle -= 0.05;
@@ -168,19 +154,8 @@ function XtraUIbuttons(){
     	setTimeout(function(){minusD.tint = 0xffffff;}, 100);
     }, this);
 	
-    frontText = game.add.text(545, 10, "angle: " + roundIt(min_angle),
+    frontText = game.add.text(545, 30, "angle: " + roundIt(min_angle),
     {font: '24px', fill: 'white'});
-}
-
-function initVars(){
-	game.stage.backgroundColor = DEFAULT_COLOR;
-
-    backSfx = game.add.audio('back');
-	frontSfx = game.add.audio('front'); 
-
-	circle = game.add.image(0, 0, 'circle');
-    circle.x = WIDTH / 2 - circle.width / 2;
-    circle.y = HEIGHT / 2 - circle.height / 2;
 }
 
 function roundIt(_num){
