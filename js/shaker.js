@@ -8,17 +8,19 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel_front = 2;
-	min_accel_back = 1.5;
+	min_accel_front = 1.4;
+	min_accel_back = 0.9;
 	
 	lastTenAccels = [];
 	lastTenAngles = [];
 
 	angle = 0;
-	min_angle_front = 3.6;
-	min_angle_back = 1.2;
+	min_angle_front = 2.9;
+	min_angle_back = 2.2;
 	
 	last_hit = '';
+	
+	resetBack = true;
 };
 
 shakerMain.prototype = {
@@ -82,16 +84,24 @@ function readAcc(event){
 		
 		else if(Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel_back){
 			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -min_angle_back){
-				backSfx.play();
-				
-				last_hit = 'BACK';
-				flash(BACK_COLOR);
+				if (resetBack){
+					backSfx.play();
+					
+					last_hit = 'BACK';
+					flash(BACK_COLOR);
+				}
 			}
 		}
 	}	
 }
 
 function flash(_color){
+	resetBack = false;
+	
+	setTimeout(function(){
+		resetBack = true;
+	}, 200);
+	
 	debugTxtHitAngle.text = 'Angle at hit: ' + angle;
 	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '\n(X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';;
 	
