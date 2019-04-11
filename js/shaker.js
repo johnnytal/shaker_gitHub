@@ -10,8 +10,11 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel_front = 2.5;
-	min_accel_back = -4.5;
+	min_accel_front = 1.8;
+	min_accel_back = -3.5;
+	
+	lastTenAccels = [];
+	lastTenAngles = [];
 
 	angle = 0;
 	MIN_FRONT_ANGLE = 19;
@@ -32,7 +35,12 @@ shakerMain.prototype = {
 	    debugTxtHitAngle = game.add.text(20, 85, "Angle at hit" , {font: '21px', fill: 'white'});
 	    debugTxtHitAccel = game.add.text(20, 115, "Accel at hit" , {font: '21px', fill: 'white'});
 	    
-	    debugTxtLastHit = game.add.text(20, 175, "last hit" , {font: '22px', fill: 'grey'});
+	    debugTxtLastHit = game.add.text(20, 175, "last hit" , {font: '22px', fill: 'lightgrey'});
+	    
+	    debugTxtLastTenAccels = game.add.text(20, 325, "Accles: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
+	    {font: '21px', fill: 'white'});
+	    debugTxtLastTenAngles = game.add.text(20, 355, "Angles: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
+	    {font: '21px', fill: 'white'});
 
 		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
@@ -45,6 +53,12 @@ function readAngle(event){
 	angle = roundIt(event.gamma);
 
 	debugTxtAngle.text = 'Angle: ' + angle + '  (min front ' + MIN_FRONT_ANGLE + ', min back ' + MIN_BACK_ANGLE + ')';
+	
+	lastTenAngles.push(angle);
+	if (lastTenAngles.length > 10) {
+    	lastTenAngles.shift();
+	}
+	debugTxtLastTenAngles= 'Angles: ' + lastTenAngles;
 }
 
 function readAcc(event){
@@ -53,6 +67,12 @@ function readAcc(event){
 	accelZ = roundIt(event.acceleration.z);
 	
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
+	
+	lastTenAccels.push(aveAccel);
+	if (lastTenAccels.length > 10) {
+    	lastTenAccels.shift();
+	}
+	debugTxtLastTenAccels = 'Accels: ' + lastTenAccels;
 	
 	debugTxtAccel.text = 'Accel: ' + Math.round(aveAccel * 10) / 10 +
 	'  (X: ' + Math.round(accelX) + ',  Y: ' + Math.round(accelY) + ',  Z: ' + Math.round(accelZ) + ')';
@@ -66,13 +86,13 @@ function readAcc(event){
 			frontSfx.play();
 			flash(FRONT_COLOR);
 			
-			last_hit = 'Back';
+			last_hit = 'Front';
 		}
 		else if (aveAccel > min_accel_front && MIN_FRONT_ANGLE >= angle){
 			backSfx.play();
 			flash(BACK_COLOR);
 			
-			last_hit = 'Front';
+			last_hit = 'back';
 		}
 	}	
 }
@@ -82,7 +102,7 @@ function flash(_color){
 	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '  (X: ' + accelX + ',  Y: ' + accelY + ',  Z: ' + accelZ + ')';;
 	
 	debugTxtLastHit.text = 'Last hit: ' + last_hit;
-	
+
 	resetTouching = false;
 	
 	game.stage.backgroundColor = _color;
