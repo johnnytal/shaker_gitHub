@@ -37,7 +37,7 @@ shakerMain.prototype = {
 	    
 	    debugTxtLastHit = game.add.text(20, 175, "last hit" , {font: '22px', fill: 'lightgrey'});
 	    
-	    debugTxtLastTenAccels = game.add.text(20, 325, "Accles: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
+	    debugTxtLastTenAccels = game.add.text(20, 325, "Accels: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
 	    {font: '21px', fill: 'white'});
 	    debugTxtLastTenAngles = game.add.text(20, 355, "Angles: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]" , 
 	    {font: '21px', fill: 'white'});
@@ -58,7 +58,7 @@ function readAngle(event){
 	if (lastTenAngles.length > 10) {
     	lastTenAngles.shift();
 	}
-	debugTxtLastTenAngles= 'Angles: ' + lastTenAngles;
+	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles;
 }
 
 function readAcc(event){
@@ -72,7 +72,7 @@ function readAcc(event){
 	if (lastTenAccels.length > 10) {
     	lastTenAccels.shift();
 	}
-	debugTxtLastTenAccels = 'Accels: ' + lastTenAccels;
+	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels;
 	
 	debugTxtAccel.text = 'Accel: ' + Math.round(aveAccel * 10) / 10 +
 	'  (X: ' + Math.round(accelX) + ',  Y: ' + Math.round(accelY) + ',  Z: ' + Math.round(accelZ) + ')';
@@ -92,7 +92,7 @@ function readAcc(event){
 			backSfx.play();
 			flash(BACK_COLOR);
 			
-			last_hit = 'back';
+			last_hit = 'Back';
 		}
 	}	
 }
