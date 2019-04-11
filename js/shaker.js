@@ -21,6 +21,8 @@ var shakerMain = function(game){
 	last_hit = '';
 	
 	resetBack = true;
+	
+	backTimeOut = null;
 };
 
 shakerMain.prototype = {
@@ -98,7 +100,9 @@ function readAcc(event){
 function flash(_color){
 	resetBack = false;
 	
-	setTimeout(function(){
+	try{clearTimeout(backTimeOut);}catch(e){};
+	
+	backTimeOut = setTimeout(function(){
 		resetBack = true;
 	}, 200);
 	
