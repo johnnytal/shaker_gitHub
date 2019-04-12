@@ -8,19 +8,19 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel_front = 1.4;
-	min_accel_back = 0.9;
+	min_accel_front = 1.3;
+	min_accel_back = 0.7;
 	
 	lastTenAccels = [];
 	lastTenAngles = [];
 
 	angle = 0;
-	min_angle_front = 2.9;
-	min_angle_back = 2.2;
+	min_angle_front = 3.1;
+	min_angle_back = 4.4;
 	
 	last_hit = '';
 	
-	min_time = 100;
+	min_time = 250;
 	
 	reset = true;
 	
@@ -137,9 +137,8 @@ function flash(_color){
 		if (window.plugins.flashlight.isSwitchedOn()){
 			window.plugins.flashlight.switchOff();
 		}
-		
 		game.stage.backgroundColor = DEFAULT_COLOR;
-	}, 75);
+	}, 80);
 }
 
 function XtraUIbuttons(){
@@ -227,12 +226,10 @@ function XtraUIbuttons(){
     }, this);
 	
     frontText2 = game.add.text(240, 30, "angle back: " + roundIt(min_angle_back),
-    {font: '22px', fill: 'black'});
-    
+    {font: '22px', fill: 'black'}); 
     
     ///
-    
-    
+     
     plusTime = game.add.sprite(465, 165, 'plus');
     plusTime.scale.set(.8,.8);
     plusTime.inputEnabled = true;
@@ -256,9 +253,7 @@ function XtraUIbuttons(){
     timeMin = game.add.text(410, 125, "time: " + roundIt(min_time),
     {font: '22px', fill: 'black'});
     
-    
     ///
-
 
     modeGravityBtn = game.add.sprite(425, 15, 'minus');
     modeGravityBtn.tint = 0xf42a1a;
@@ -275,7 +270,6 @@ function XtraUIbuttons(){
     	}
     	
     	gravTxt.text = "Gravity: " + modeGravity;
-    	
     }, this);
     
     gravTxt = game.add.text(415, 80, "Gravity: " + modeGravity,
@@ -289,5 +283,5 @@ function roundIt(_num){
 function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
     try{StatusBar.hide();} catch(e){} // hide status bar
-    try{window.androidVolume.setMusic(10, false);} catch(e){} // max media volume
+    try{window.androidVolume.setMusic(20, false);} catch(e){} // max media volume
 }
