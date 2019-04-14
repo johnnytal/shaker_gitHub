@@ -7,16 +7,16 @@ var shakerMain = function(game){
 	accelX = 0;
 	accelY = 0;
 	accelZ = 0;
-	
-	min_accel_front = 0.8;
-	min_accel_back = 0.35;
-	
+
 	lastfiveAccels = [];
 	lastfiveAngles = [];
 
+	min_accel_front = 3.825;
+	min_accel_back = -2.65;
+	
 	angle = 0;
 	min_angle_front = 0.35;
-	min_angle_back = 0;
+	min_angle_back = 2.5;
 	
 	min_abs_angle_front = 0;
 	min_abs_angle_back = 0;
@@ -26,14 +26,14 @@ var shakerMain = function(game){
 	
 	last_hit = 'FRONT';
 	
-	min_time = 250;
+	min_time = 180;
 	
 	reset = true;
 	
 	modeGravity = true;
-	modeOneWay = false;
+	modeOneWay = true;
 	modeAbsAngle = false;
-	modeAbsAccel = false;
+	modeAbsAccel = true;
 
 	backTimeOut = null;
 };
@@ -96,7 +96,7 @@ function readAcc(event){
 			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] < min_abs_accel_front){ 
 			
 			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front || 
-			modeAbsAngle && absAngle > min_abs_angle_front){
+			modeAbsAngle && angle > min_abs_angle_front){
 				
 				if (!modeOneWay || (modeOneWay && last_hit == 'BACK')){
 					frontSfx.play();
@@ -112,7 +112,7 @@ function readAcc(event){
 			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] > min_abs_accel_back){
 				
 			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back ||
-			modeAbsAngle &&  absAngle < min_abs_angle_back){
+			modeAbsAngle && angle < min_abs_angle_back){
 			
 				if (!modeOneWay || (modeOneWay && last_hit == 'FRONT')){
 					backSfx.play();
