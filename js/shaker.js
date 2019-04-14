@@ -24,7 +24,7 @@ var shakerMain = function(game){
 	min_abs_accel_front = 0;
 	min_abs_accel_back = 0;
 	
-	last_hit = '';
+	last_hit = 'FRONT';
 	
 	min_time = 250;
 	
@@ -56,8 +56,8 @@ shakerMain.prototype = {
 	    debugTxtLastfiveAccels = game.add.text(10, 335, "Accels:" ,{font: '22px', fill: 'darkblue'});
 	    debugTxtLastfiveAngles = game.add.text(10, 365, "Angles:" ,{font: '22px', fill: 'darkblue'});
 
-		try{window.addEventLisfiveer('deviceorientation', readAngle);} catch(e){}
-		try{window.addEventLisfiveer('devicemotion', readAcc);} catch(e){}
+		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
+		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
 
 		XtraUIbuttons();
 		initPlugIns();
@@ -92,15 +92,11 @@ function readAcc(event){
 	if (!frontSfx.isPlaying && !backSfx.isPlaying && reset){
 
 		if (
-			!modeAbsAccel && 
-			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front ||
-			modeAbsAccel &&
-			lastfiveAccels[lastfiveAccels.length-1] < min_abs_accel_front){ 
+			!modeAbsAccel && Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front ||
+			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] < min_abs_accel_front){ 
 			
-			if (!modeAbsAngle && 
-			lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front || 
-			modeAbsAngle && 
-			absAngle > min_abs_angle_front){
+			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front || 
+			modeAbsAngle && absAngle > min_abs_angle_front){
 				
 				if (!modeOneWay || (modeOneWay && last_hit == 'BACK')){
 					frontSfx.play();
@@ -112,15 +108,11 @@ function readAcc(event){
 		}
 		
 		else if(
-			!modeAbsAccel && 
-			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back ||
-			modeAbsAccel &&
-			lastfiveAccels[lastfiveAccels.length-1] > min_abs_accel_back){
+			!modeAbsAccel && Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back ||
+			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] > min_abs_accel_back){
 				
-			if (!modeAbsAngle &&
-			lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back ||
-			modeAbsAngle && 
-			absAngle < min_abs_angle_back){
+			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back ||
+			modeAbsAngle &&  absAngle < min_abs_angle_back){
 			
 				if (!modeOneWay || (modeOneWay && last_hit == 'FRONT')){
 					backSfx.play();
