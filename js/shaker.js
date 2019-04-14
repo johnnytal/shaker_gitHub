@@ -8,15 +8,21 @@ var shakerMain = function(game){
 	accelY = 0;
 	accelZ = 0;
 	
-	min_accel_front = 1.3;
-	min_accel_back = 0.7;
+	min_accel_front = 0.8;
+	min_accel_back = 0.35;
 	
-	lastTenAccels = [];
-	lastTenAngles = [];
+	lastfiveAccels = [];
+	lastfiveAngles = [];
 
 	angle = 0;
-	min_angle_front = 3.1;
-	min_angle_back = 4.4;
+	min_angle_front = 0.35;
+	min_angle_back = 0;
+	
+	min_abs_angle_front = 0;
+	min_abs_angle_back = 0;
+	
+	min_abs_accel_front = 0;
+	min_abs_accel_back = 0;
 	
 	last_hit = '';
 	
@@ -24,7 +30,10 @@ var shakerMain = function(game){
 	
 	reset = true;
 	
-	modeGravity = false;
+	modeGravity = true;
+	modeOneWay = false;
+	modeAbsAngle = false;
+	modeAbsAccel = false;
 
 	backTimeOut = null;
 };
@@ -44,11 +53,11 @@ shakerMain.prototype = {
 	    
 	    debugTxtLastHit = game.add.text(20, 215, "last hit" , {font: '22px', fill: 'blue'});
 	    
-	    debugTxtLastTenAccels = game.add.text(10, 335, "Accels:" ,{font: '22px', fill: 'darkblue'});
-	    debugTxtLastTenAngles = game.add.text(10, 365, "Angles:" ,{font: '22px', fill: 'darkblue'});
+	    debugTxtLastfiveAccels = game.add.text(10, 335, "Accels:" ,{font: '22px', fill: 'darkblue'});
+	    debugTxtLastfiveAngles = game.add.text(10, 365, "Angles:" ,{font: '22px', fill: 'darkblue'});
 
-		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
-		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
+		try{window.addEventLisfiveer('deviceorientation', readAngle);} catch(e){}
+		try{window.addEventLisfiveer('devicemotion', readAcc);} catch(e){}
 
 		XtraUIbuttons();
 		initPlugIns();
@@ -60,9 +69,9 @@ function readAngle(event){
 
 	debugTxtAngle.text = 'Angle: ' + angle;
 	
-	lastTenAngles.push(angle);
-	if (lastTenAngles.length > 8) {
-    	lastTenAngles.shift();
+	lastfiveAngles.push(angle);
+	if (lastfiveAngles.length > 5) {
+    	lastfiveAngles.shift();
 	}
 }
 
@@ -81,30 +90,54 @@ function readAcc(event){
 	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying && reset){
-		if (Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel_front){ 
-			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] > min_angle_front){ 
-				frontSfx.play();
+
+		if (
+			!modeAbsAccel && 
+			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front ||
+			modeAbsAccel &&
+			lastfiveAccels[lastfiveAccels.length-1] < min_abs_accel_front){ 
+			
+			if (!modeAbsAngle && 
+			lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front || 
+			modeAbsAngle && 
+			absAngle > min_abs_angle_front){
 				
-				last_hit = 'FRONT';
-				flash(FRONT_COLOR);	
+				if (!modeOneWay || (modeOneWay && last_hit == 'BACK')){
+					frontSfx.play();
+					
+					last_hit = 'FRONT';
+					flash(FRONT_COLOR);	
+				}	
 			}
 		}
 		
-		else if(Math.abs(lastTenAccels[lastTenAccels.length-1] - lastTenAccels[lastTenAccels.length-2]) > min_accel_back){
-			if (lastTenAngles[lastTenAngles.length-1] - lastTenAngles[lastTenAngles.length-2] < -min_angle_back){
-				backSfx.play();
+		else if(
+			!modeAbsAccel && 
+			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back ||
+			modeAbsAccel &&
+			lastfiveAccels[lastfiveAccels.length-1] > min_abs_accel_back){
 				
-				last_hit = 'BACK';
-				flash(BACK_COLOR);
+			if (!modeAbsAngle &&
+			lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back ||
+			modeAbsAngle && 
+			absAngle < min_abs_angle_back){
+			
+				if (!modeOneWay || (modeOneWay && last_hit == 'FRONT')){
+					backSfx.play();
+					
+					last_hit = 'BACK';
+					flash(BACK_COLOR);
+				}
 			}
 		}
+	
 	}
 	
 	debugTxtAccel.text = 'Accel: ' + aveAccel;
 	
-	lastTenAccels.push(aveAccel);
-	if (lastTenAccels.length > 8) {
-    	lastTenAccels.shift();
+	lastfiveAccels.push(aveAccel);
+	if (lastfiveAccels.length > 5) {
+    	lastfiveAccels.shift();
 	}	
 }
 
@@ -122,8 +155,8 @@ function flash(_color){
 	
 	debugTxtLastHit.text = 'Last hit: ' + last_hit;
 	
-	debugTxtLastTenAccels.text = 'Accels: ' + lastTenAccels.join(', ');
-	debugTxtLastTenAngles.text = 'Angles: ' + lastTenAngles.join(', ');
+	debugTxtLastfiveAccels.text = 'Accels: ' + lastfiveAccels.join(', ');
+	debugTxtLastfiveAngles.text = 'Angles: ' + lastfiveAngles.join(', ');
 
 	game.stage.backgroundColor = _color;
 
@@ -141,143 +174,8 @@ function flash(_color){
 	}, 80);
 }
 
-function XtraUIbuttons(){
-    plus = game.add.sprite(620, 240, 'plus');
-    plus.inputEnabled = true;
-    plus.events.onInputDown.add(function(){
-    	min_accel_front += 0.05;
-    	backText.text = "accel front: " + roundIt(min_accel_front);
-    	plus.tint = 0xf04030;
-    	setTimeout(function(){plus.tint = 0xffffff;}, 100);
-    }, this);
-    
-    minus = game.add.sprite(525, 240, 'minus');
-    minus.inputEnabled = true;
-    minus.events.onInputDown.add(function(){
-    	min_accel_front -= 0.05;
-    	backText.text = "accel front: " + roundIt(min_accel_front);
-    	minus.tint = 0xf04030;
-    	setTimeout(function(){minus.tint = 0xffffff;}, 100);
-    }, this);
-    
-    backText = game.add.text(540, 190, "accel front: " + roundIt(min_accel_front),
-    {font: '22px', fill: 'black'});
-
-    plusD = game.add.sprite(620, 80, 'plus');
-    plusD.inputEnabled = true;
-    plusD.events.onInputDown.add(function(){
-    	min_angle_front += 0.05;
-    	frontText.text = "angle front: " + roundIt(min_angle_front);
-    	plusD.tint = 0xf04030;
-    	setTimeout(function(){plusD.tint = 0xffffff;}, 100);
-    }, this);
-    
-    minusD = game.add.sprite(525, 80, 'minus');
-    minusD.inputEnabled = true;
-    minusD.events.onInputDown.add(function(){
-    	min_angle_front -= 0.05;
-    	frontText.text = "angle front: " + roundIt(min_angle_front);
-    	minusD.tint = 0xf04030;
-    	setTimeout(function(){minusD.tint = 0xffffff;}, 100);
-    }, this);
-	
-    frontText = game.add.text(540, 30, "angle front: " + roundIt(min_angle_front),
-    {font: '22px', fill: 'black'});
-    
-    ///////
-    
-    plus2 = game.add.sprite(320, 240, 'plus');
-    plus2.inputEnabled = true;
-    plus2.events.onInputDown.add(function(){
-    	min_accel_back += 0.05;
-    	backText2.text = "accel back: " + roundIt(min_accel_back);
-    	plus2.tint = 0xf04030;
-    	setTimeout(function(){plus2.tint = 0xffffff;}, 100);
-    }, this);
-    
-    minus2 = game.add.sprite(225, 240, 'minus');
-    minus2.inputEnabled = true;
-    minus2.events.onInputDown.add(function(){
-    	min_accel_back -= 0.05;
-    	backText2.text = "accel back: " + roundIt(min_accel_back);
-    	minus2.tint = 0xf04030;
-    	setTimeout(function(){minus2.tint = 0xffffff;}, 100);
-    }, this);
-        
-    backText2 = game.add.text(240, 190, "accel back: " + roundIt(min_accel_back),
-    {font: '22px', fill: 'black'});
-
-    plusD2 = game.add.sprite(320, 80, 'plus');
-    plusD2.inputEnabled = true;
-    plusD2.events.onInputDown.add(function(){
-    	min_angle_back += 0.05;
-    	frontText2.text = "angle back: " + roundIt(min_angle_back);
-    	plusD2.tint = 0xf04030;
-    	setTimeout(function(){plusD2.tint = 0xffffff;}, 100);
-    }, this);
-    
-    minusD2 = game.add.sprite(225, 80, 'minus');
-    minusD2.inputEnabled = true;
-    minusD2.events.onInputDown.add(function(){
-    	min_angle_back -= 0.05;
-    	frontText2.text = "angle back: " + roundIt(min_angle_back);
-    	minusD2.tint = 0xf04030;
-    	setTimeout(function(){minusD2.tint = 0xffffff;}, 100);
-    }, this);
-	
-    frontText2 = game.add.text(240, 30, "angle back: " + roundIt(min_angle_back),
-    {font: '22px', fill: 'black'}); 
-    
-    ///
-     
-    plusTime = game.add.sprite(465, 165, 'plus');
-    plusTime.scale.set(.8,.8);
-    plusTime.inputEnabled = true;
-    plusTime.events.onInputDown.add(function(){
-    	min_time += 10;
-    	timeMin.text = "time: " + roundIt(min_time);
-    	plusTime.tint = 0xf04030;
-    	setTimeout(function(){plusTime.tint = 0xffffff;}, 100);
-    }, this);
-    
-    minusTime = game.add.sprite(385, 165, 'minus');
-    minusTime.scale.set(.8,.8);
-    minusTime.inputEnabled = true;
-    minusTime.events.onInputDown.add(function(){
-    	min_time -= 10;
-    	timeMin.text = "time: " + roundIt(min_time);
-    	minusTime.tint = 0xf04030;
-    	setTimeout(function(){minusTime.tint = 0xffffff;}, 100);
-    }, this);
-	
-    timeMin = game.add.text(410, 125, "time: " + roundIt(min_time),
-    {font: '22px', fill: 'black'});
-    
-    ///
-
-    modeGravityBtn = game.add.sprite(425, 15, 'minus');
-    modeGravityBtn.tint = 0xf42a1a;
-    modeGravityBtn.scale.set(.75,.75);
-    modeGravityBtn.inputEnabled = true;
-    modeGravityBtn.events.onInputDown.add(function(){
-    	if (!modeGravity){
-    		modeGravity = true;
-    		modeGravityBtn.tint = 0xffff2f;
-    	}
-    	else{
-    		modeGravity = false;
-    		modeGravityBtn.tint = 0xf42a1a;
-    	}
-    	
-    	gravTxt.text = "Gravity: " + modeGravity;
-    }, this);
-    
-    gravTxt = game.add.text(415, 80, "Gravity: " + modeGravity,
-    {font: '16px', fill: 'red'});
-}
-
 function roundIt(_num){
-	return Math.round(_num * 100) / 100;
+	return Math.round(_num * 1000) / 1000;
 }
 
 function initPlugIns(){
