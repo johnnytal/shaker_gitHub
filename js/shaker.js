@@ -7,16 +7,17 @@ var shakerMain = function(game){
 	accelX = 0;
 	accelY = 0;
 	accelZ = 0;
+	
+	angle = 0;
 
 	lastfiveAccels = [];
 	lastfiveAngles = [];
 
-	min_accel_front = 3.825;
-	min_accel_back = -2.65;
-	
-	angle = 0;
+	min_accel_front = 0.8;
+	min_accel_back = 0.35;
+
 	min_angle_front = 0.35;
-	min_angle_back = 2.5;
+	min_angle_back = 0;
 	
 	min_abs_angle_front = 0;
 	min_abs_angle_back = 0;
@@ -31,11 +32,9 @@ var shakerMain = function(game){
 	reset = true;
 	
 	modeGravity = true;
-	modeOneWay = true;
+	modeOneWay = false;
 	modeAbsAngle = false;
-	modeAbsAccel = true;
-
-	backTimeOut = null;
+	modeAbsAccel = false;
 };
 
 shakerMain.prototype = {

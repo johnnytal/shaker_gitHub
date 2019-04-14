@@ -173,11 +173,9 @@ function XtraUIbuttons(){
     
     oneWay = game.add.text(415, 175, "One way: " + modeOneWay,
     {font: '16px', fill: 'red'});
-    
-    
+
     /////
-    
-    
+
     modeAbsAngleBtn = game.add.sprite(450, 225, 'minus');
     modeAbsAngleBtn.scale.set(.8,.8);
     modeAbsAngleBtn.tint = 0xf42a1a;
@@ -197,8 +195,7 @@ function XtraUIbuttons(){
     
     absAngle = game.add.text(415, 280, "Abs angle: " + modeAbsAngle,
     {font: '16px', fill: 'red'});
-    
-    
+       
     //////
     
     modeAbsAccelBtn = game.add.sprite(450, 330, 'minus');
