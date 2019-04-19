@@ -12,29 +12,23 @@ var shakerMain = function(game){
 
 	lastfiveAccels = [];
 	lastfiveAngles = [];
-
-	min_accel_front = 0.8;
-	min_accel_back = 0.35;
-
-	min_angle_front = 0.35;
-	min_angle_back = 0;
-	
-	min_abs_angle_front = 0;
-	min_abs_angle_back = 0;
-	
-	min_abs_accel_front = 0;
-	min_abs_accel_back = 0;
 	
 	last_hit = 'FRONT';
 	
-	min_time = 180;
-	
 	reset = true;
 	
-	modeGravity = true;
 	modeOneWay = false;
-	modeAbsAngle = false;
-	modeAbsAccel = false;
+	
+	option = 1;
+
+	modeGravity = false;
+	min_time = 250;
+	
+	min_accel_front = 0.75;
+	min_accel_back = 0.35;
+
+	min_angle_front = 0;
+	min_angle_back = 0;
 };
 
 shakerMain.prototype = {
@@ -90,13 +84,8 @@ function readAcc(event){
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying && reset){
 
-		if (
-			!modeAbsAccel && Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front ||
-			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] < min_abs_accel_front){ 
-			
-			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front || 
-			modeAbsAngle && angle > min_abs_angle_front){
-				
+		if (Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front){ 
+			if (lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front){
 				if (!modeOneWay || (modeOneWay && last_hit == 'BACK')){
 					frontSfx.play();
 					
@@ -107,12 +96,8 @@ function readAcc(event){
 		}
 		
 		else if(
-			!modeAbsAccel && Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back ||
-			modeAbsAccel && lastfiveAccels[lastfiveAccels.length-1] > min_abs_accel_back){
-				
-			if (!modeAbsAngle && lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back ||
-			modeAbsAngle && angle < min_abs_angle_back){
-			
+			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back){	
+			if (lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back){
 				if (!modeOneWay || (modeOneWay && last_hit == 'FRONT')){
 					backSfx.play();
 					
@@ -163,6 +148,57 @@ function flash(_color){
 		}
 		game.stage.backgroundColor = DEFAULT_COLOR;
 	}, 80);
+}
+
+function XtraUIbuttons(){  
+    text1 = game.add.text(200, 20, "Option: " + option, {font: '45px', fill: 'black'});
+    text2 = game.add.text(200, 150, "One Way: " + modeOneWay,{font: '45px', fill: 'black'});
+	
+    plus_accel_front = game.add.sprite(text1.x + 350, text1.y, 'plus');
+    plus_accel_front.inputEnabled = true;
+    plus_accel_front.events.onInputDown.add(function(){
+		if (option == 1){
+			option = 2;
+			
+			modeGravity = true;
+			
+			min_time = 100;
+			
+			min_accel_front = 0.8;
+			min_accel_back = 0.35;
+		
+			min_angle_front = 0.35;
+			min_angle_back = 0;
+		}
+		else{
+			option = 1;
+			
+			modeGravity = false;
+			
+			min_time = 250;
+			
+			min_accel_front = 0.75;
+			min_accel_back = 0.35;
+		
+			min_angle_front = 0;
+			min_angle_back = 0;
+		}
+		
+		text1.text = "Option: " + option;
+    }, this);
+    
+    minus_accel_front = game.add.sprite(text2.x + 350, text2.y + 50, 'plus');
+    minus_accel_front.tint = '0xff4422';
+    minus_accel_front.inputEnabled = true;
+    minus_accel_front.events.onInputDown.add(function(){
+		if (modeOneWay == true){
+			modeOneWay = false;
+		}
+		else{
+			modeOneWay = true;
+		}
+		text2.text = "One Way: " + modeOneWay;
+    }, this);
 }
 
 function roundIt(_num){
