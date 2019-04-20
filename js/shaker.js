@@ -16,7 +16,7 @@ var shakerMain = function(game){
 	MIN_ANGLE_F = 0.35;
 	MIN_ANGLE_B = 0;
 	
-	lastAction = 'FRONT';
+	lastAction = '';
 };
 
 shakerMain.prototype = {
@@ -52,7 +52,7 @@ function readAcc(event){
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying){
 		if (Math.abs(lastAccel - aveAccel) > MIN_ACCEL_F && angle - lastAngle > MIN_ANGLE_F){ 
-			if (lastAction == 'BACK'){
+			if (lastAction != 'FRONT'){
 				frontSfx.play();
 				flash(FRONT_COLOR);
 				
@@ -61,7 +61,7 @@ function readAcc(event){
 		}
 		
 		else if(Math.abs(lastAccel - aveAccel) > MIN_ACCEL_B && angle - lastAngle < MIN_ANGLE_B){	
-			if (lastAction == 'FRONT'){
+			if (lastAction != 'BACK'){
 				backSfx.play();
 				flash(BACK_COLOR);
 				
