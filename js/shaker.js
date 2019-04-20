@@ -52,10 +52,12 @@ function readAcc(event){
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying){
 		if (Math.abs(lastAccel - aveAccel) > MIN_ACCEL_F && angle - lastAngle > MIN_ANGLE_F){ 
-			frontSfx.play();
-			flash(FRONT_COLOR);
-			
-			lastAction = 'FRONT';
+			if (lastAction == 'BACK'){
+				frontSfx.play();
+				flash(FRONT_COLOR);
+				
+				lastAction = 'FRONT';
+			}
 		}
 		
 		else if(Math.abs(lastAccel - aveAccel) > MIN_ACCEL_B && angle - lastAngle < MIN_ANGLE_B){	
