@@ -2,20 +2,14 @@ var shakerMain = function(game){
 	FRONT_COLOR = '#ff00ff';
 	BACK_COLOR = '#00ff00';	
 	DEFAULT_COLOR = '#f7f7f7';
+	LOGO_TINT = '0xff0000';
 
 	aveAccel = 0;
-	accelX = 0;
-	accelY = 0;
-	accelZ = 0;
-	
 	angle = 0;
 
 	lastAccel = 0;
 	lastAngle = 0;
 
-	reset = true;
-	min_time = 100;
-	
 	MIN_ACCEL_F = 0.8;
 	MIN_ACCEL_B = 0.35;
 
@@ -48,28 +42,22 @@ shakerMain.prototype = {
 };
 
 function readAcc(event){
-	accelX = event.accelerationIncludingGravity.x;
-	accelY = event.accelerationIncludingGravity.y;
-	accelZ = event.accelerationIncludingGravity.z;
+	var aveAccel = (
+		event.accelerationIncludingGravity.x + 
+		event.accelerationIncludingGravity.y +
+		event.accelerationIncludingGravity.z
+	) / 3;
 
-	aveAccel = (accelX + accelY + accelZ) / 3;
-
-	if (!frontSfx.isPlaying && !backSfx.isPlaying && reset){
-		
-		if (Math.abs(lastAccel - aveAccel) > MIN_ACCEL_F){ 
-			if (lastAngle - angle > MIN_ANGLE_F){
-				frontSfx.play();
-				flash(FRONT_COLOR);
-			}
+	if (!frontSfx.isPlaying && !backSfx.isPlaying){
+		if (Math.abs(lastAccel - aveAccel) > MIN_ACCEL_F && angle - lastAngle > MIN_ANGLE_F){ 
+			frontSfx.play();
+			flash(FRONT_COLOR);
 		}
 		
-		else if(Math.abs(lastAccel - aveAccel) > MIN_ACCEL_B){	
-			if (lastAngle - angle < MIN_ANGLE_B){
-				backSfx.play();
-				flash(BACK_COLOR);
-			}
+		else if(Math.abs(lastAccel - aveAccel) > MIN_ACCEL_B && angle - lastAngle < MIN_ANGLE_B){	
+			backSfx.play();
+			flash(BACK_COLOR);
 		}
-		
 	}
 	
 	lastAngle = angle;
@@ -77,22 +65,16 @@ function readAcc(event){
 }
 
 function flash(_color){
-	reset = false;
-	
-	try{clearTimeout(resetTimeOut);}catch(e){};
-	
-	resetTimeOut = setTimeout(function(){
-		reset = true;
-	}, min_time);
-
-	game.stage.backgroundColor = _color;
-	logo.tint = '0xff0000';
-
 	if (_color == FRONT_COLOR){
 		window.plugins.flashlight.switchOn();	
+		navigator.vibrate(60);
+	}
+	else{
+		navigator.vibrate(40);
 	}
 	
-	navigator.vibrate(40);
+	game.stage.backgroundColor = _color;
+	logo.tint = LOGO_TINT;
 
 	setTimeout(function(){ // back to normal
 		if (window.plugins.flashlight.isSwitchedOn()){
@@ -100,7 +82,7 @@ function flash(_color){
 		}
 		game.stage.backgroundColor = DEFAULT_COLOR;
 		logo.tint = '0xffffff';
-	}, 80);
+	}, 60);
 }
 
 function initPlugIns(){
