@@ -10,111 +10,70 @@ var shakerMain = function(game){
 	
 	angle = 0;
 
-	lastfiveAccels = [];
-	lastfiveAngles = [];
-	
-	last_hit = 'FRONT';
-	
+	lastAccel = 0;
+	lastAngle = 0;
+
 	reset = true;
+	min_time = 100;
 	
-	modeOneWay = false;
-	
-	option = 1;
+	MIN_ACCEL_F = 0.8;
+	MIN_ACCEL_B = 0.35;
 
-	modeGravity = false;
-	min_time = 250;
-	
-	min_accel_front = 0.75;
-	min_accel_back = 0.35;
-
-	min_angle_front = 0;
-	min_angle_back = 0;
+	MIN_ANGLE_F = 0.35;
+	MIN_ANGLE_B = 0;
 };
 
 shakerMain.prototype = {
     create: function(){
 		game.stage.backgroundColor = DEFAULT_COLOR;
+		
+		bg = game.add.image(0, 0, 'bg');
+		bg.alpha = 0.5;
+		
+		logo = game.add.image(0, 0, 'green');
+        logo.x = WIDTH / 2 - logo.width / 2;
+        logo.y =  HEIGHT / 2 - logo.height / 2;
 
 		backSfx = game.add.audio('back');
 		frontSfx = game.add.audio('front');
 
-	    debugTxtAngle = game.add.text(20, 15, "Angle" , {font: '22px', fill: 'darkgreen'});
-	    debugTxtAccel = game.add.text(20, 45, "Accel" , {font: '22px', fill: 'darkgreen'});
- 
-	    debugTxtHitAngle = game.add.text(20, 85, "Angle at hit" , {font: '22px', fill: 'black'});
-	    debugTxtHitAccel = game.add.text(20, 115, "Accel at hit" , {font: '22px', fill: 'black'});
-	    
-	    debugTxtLastHit = game.add.text(20, 215, "last hit" , {font: '22px', fill: 'blue'});
-	    
-	    debugTxtLastfiveAccels = game.add.text(10, 335, "Accels:" ,{font: '22px', fill: 'darkblue'});
-	    debugTxtLastfiveAngles = game.add.text(10, 365, "Angles:" ,{font: '22px', fill: 'darkblue'});
-
-		try{window.addEventListener('deviceorientation', readAngle);} catch(e){}
+		try{window.addEventListener('deviceorientation', function(){
+			angle = event.gamma;
+		});} catch(e){}
+		
 		try{window.addEventListener('devicemotion', readAcc);} catch(e){}
 
-		XtraUIbuttons();
 		initPlugIns();
     }
 };
 
-function readAngle(event){	
-	angle = roundIt(event.gamma);
-
-	debugTxtAngle.text = 'Angle: ' + angle;
-	
-	lastfiveAngles.push(angle);
-	if (lastfiveAngles.length > 5) {
-    	lastfiveAngles.shift();
-	}
-}
-
 function readAcc(event){
-	if (!modeGravity){
-		accelX = roundIt(event.acceleration.x);
-		accelY = roundIt(event.acceleration.y);
-		accelZ = roundIt(event.acceleration.z);
-	}
-	else{
-		accelX = roundIt(event.accelerationIncludingGravity.x);
-		accelY = roundIt(event.accelerationIncludingGravity.y);
-		accelZ = roundIt(event.accelerationIncludingGravity.z);
-	}
-	
-	aveAccel = roundIt((accelX + accelY + accelZ) / 3);
+	accelX = event.accelerationIncludingGravity.x;
+	accelY = event.accelerationIncludingGravity.y;
+	accelZ = event.accelerationIncludingGravity.z;
+
+	aveAccel = (accelX + accelY + accelZ) / 3;
 
 	if (!frontSfx.isPlaying && !backSfx.isPlaying && reset){
-
-		if (Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_front){ 
-			if (lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] > min_angle_front){
-				if (!modeOneWay || (modeOneWay && last_hit == 'BACK')){
-					frontSfx.play();
-					
-					last_hit = 'FRONT';
-					flash(FRONT_COLOR);	
-				}	
+		
+		if (Math.abs(lastAccel - aveAccel) > MIN_ACCEL_F){ 
+			if (lastAngle - angle > MIN_ANGLE_F){
+				frontSfx.play();
+				flash(FRONT_COLOR);
 			}
 		}
 		
-		else if(
-			Math.abs(lastfiveAccels[lastfiveAccels.length-1] - lastfiveAccels[lastfiveAccels.length-2]) > min_accel_back){	
-			if (lastfiveAngles[lastfiveAngles.length-1] - lastfiveAngles[lastfiveAngles.length-2] < -min_angle_back){
-				if (!modeOneWay || (modeOneWay && last_hit == 'FRONT')){
-					backSfx.play();
-					
-					last_hit = 'BACK';
-					flash(BACK_COLOR);
-				}
+		else if(Math.abs(lastAccel - aveAccel) > MIN_ACCEL_B){	
+			if (lastAngle - angle < MIN_ANGLE_B){
+				backSfx.play();
+				flash(BACK_COLOR);
 			}
 		}
-	
+		
 	}
 	
-	debugTxtAccel.text = 'Accel: ' + aveAccel;
-	
-	lastfiveAccels.push(aveAccel);
-	if (lastfiveAccels.length > 5) {
-    	lastfiveAccels.shift();
-	}	
+	lastAngle = angle;
+	lastAccel = aveAccel;
 }
 
 function flash(_color){
@@ -125,16 +84,9 @@ function flash(_color){
 	resetTimeOut = setTimeout(function(){
 		reset = true;
 	}, min_time);
-	
-	debugTxtHitAngle.text = 'Angle at hit: ' + angle;
-	debugTxtHitAccel.text = 'Accel at hit: ' + aveAccel + '\n(X: ' + accelX + ',  Y: ' + accelY + '\n,  Z: ' + accelZ + ')';;
-	
-	debugTxtLastHit.text = 'Last hit: ' + last_hit;
-	
-	debugTxtLastfiveAccels.text = 'Accels: ' + lastfiveAccels.join(', ');
-	debugTxtLastfiveAngles.text = 'Angles: ' + lastfiveAngles.join(', ');
 
 	game.stage.backgroundColor = _color;
+	logo.tint = '0xff0000';
 
 	if (_color == FRONT_COLOR){
 		window.plugins.flashlight.switchOn();	
@@ -147,66 +99,12 @@ function flash(_color){
 			window.plugins.flashlight.switchOff();
 		}
 		game.stage.backgroundColor = DEFAULT_COLOR;
+		logo.tint = '0xffffff';
 	}, 80);
-}
-
-function XtraUIbuttons(){  
-    text1 = game.add.text(200, 20, "Option: " + option, {font: '45px', fill: 'black'});
-    text2 = game.add.text(200, 150, "One Way: " + modeOneWay,{font: '45px', fill: 'black'});
-	
-    plus_accel_front = game.add.sprite(text1.x + 350, text1.y, 'plus');
-    plus_accel_front.inputEnabled = true;
-    plus_accel_front.events.onInputDown.add(function(){
-		if (option == 1){
-			option = 2;
-			
-			modeGravity = true;
-			
-			min_time = 100;
-			
-			min_accel_front = 0.8;
-			min_accel_back = 0.35;
-		
-			min_angle_front = 0.35;
-			min_angle_back = 0;
-		}
-		else{
-			option = 1;
-			
-			modeGravity = false;
-			
-			min_time = 250;
-			
-			min_accel_front = 0.75;
-			min_accel_back = 0.35;
-		
-			min_angle_front = 0;
-			min_angle_back = 0;
-		}
-		
-		text1.text = "Option: " + option;
-    }, this);
-    
-    minus_accel_front = game.add.sprite(text2.x + 350, text2.y + 50, 'plus');
-    minus_accel_front.tint = '0xff4422';
-    minus_accel_front.inputEnabled = true;
-    minus_accel_front.events.onInputDown.add(function(){
-		if (modeOneWay == true){
-			modeOneWay = false;
-		}
-		else{
-			modeOneWay = true;
-		}
-		text2.text = "One Way: " + modeOneWay;
-    }, this);
-}
-
-function roundIt(_num){
-	return Math.round(_num * 1000) / 1000;
 }
 
 function initPlugIns(){
     try{window.plugins.insomnia.keepAwake();} catch(e){} // keep awake
     try{StatusBar.hide();} catch(e){} // hide status bar
-    try{window.androidVolume.setMusic(20, false);} catch(e){} // max media volume
+    try{window.androidVolume.setMusic(100, false);} catch(e){} // max media volume
 }

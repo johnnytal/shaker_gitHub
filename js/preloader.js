@@ -4,6 +4,8 @@ preloader.prototype = {
     preload: function(){
         game.load.image('plus', 'assets/images/plus.png');
         game.load.image('minus', 'assets/images/minus.png');
+        game.load.image('green', 'assets/images/green.png');
+        game.load.image('bg', 'assets/images/bg.png');
         
         game.load.audio("front", "assets/audio/front.mp3");
         game.load.audio("back", "assets/audio/back.mp3");
